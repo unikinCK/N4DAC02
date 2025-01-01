@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modbus Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        form {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004080;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modbus TCP Control Interface</h1>
+    <p>This interface allows you to monitor and control the voltage of connected Modbus devices.</p>
+
+    <div class="section">
+        <h2>Modbus Status</h2>
+        <p>Status: <strong>{{ "Connected" if modbus_connected else "Disconnected" }}</strong></p>
+    </div>
+
+    <div class="section">
+        <h2>Current Voltage Readings</h2>
+        <p>Channel 1: <strong>{{ voltage_1 }} V</strong></p>
+        <p>Channel 2: <strong>{{ voltage_2 }} V</strong></p>
+    </div>
+
+    <div class="section">
+        <h2>Set Voltage</h2>
+        <form action="/set_voltage_form" method="post">
+            <label for="channel">Channel (1 or 2):</label>
+            <input type="number" id="channel" name="channel" min="1" max="2" required>
+
+            <label for="voltage">Voltage:</label>
+            <input type="number" id="voltage" name="voltage" step="0.01" required>
+
+            <button type="submit">Set Voltage</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Update Modbus Configuration</h2>
+        <form action="/update_config" method="post">
+            <label for="host">Host:</label>
+            <input type="text" id="host" name="host" value="{{ host }}" required>
+
+            <label for="port">Port:</label>
+            <input type="number" id="port" name="port" value="{{ port }}" required>
+
+            <label for="unit_id">Unit ID:</label>
+            <input type="number" id="unit_id" name="unit_id" value="{{ unit_id }}" required>
+
+            <button type="submit">Update Configuration</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>MQTT Configuration</h2>
+        <p>Status: <strong>{{ "Connected" if mqtt_connected else "Disconnected" }}</strong></p>
+        <form action="/update_mqtt" method="post">
+            <label for="mqtt_broker">MQTT Broker:</label>
+            <input type="text" id="mqtt_broker" name="mqtt_broker" value="{{ mqtt_broker }}" required>
+
+            <label for="mqtt_port">MQTT Port:</label>
+            <input type="number" id="mqtt_port" name="mqtt_port" value="{{ mqtt_port }}" required>
+
+            <button type="submit">Update MQTT Configuration</button>
+        </form>
+    </div>
+    
+    <div class="section">
+        <h2>Update MQTT Base Topic</h2>
+        <form action="/update_mqtt_topic" method="post">
+            <label for="base_topic">Base Topic:</label>
+            <!-- Pre-fill with the current MQTT_BASE_TOPIC value -->
+            <input type="text" id="base_topic" name="base_topic" value="{{ mqtt_base_topic }}" required>
+            
+            <button type="submit">Update Base Topic</button>
+        </form>
+    </div>
+
+    <!-- Link to the API Docs -->
+    <hr>
+    <div class="section">
+        <p>For a full list of available REST endpoints, please visit 
+           <a href="{{ url_for('api_doc') }}">our API Documentation</a>.
+        </p>
+    </div>
+</body>
+</html>

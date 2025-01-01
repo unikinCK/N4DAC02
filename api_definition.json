@@ -1,0 +1,90 @@
+[
+    {
+        "endpoint": "/get_voltage",
+        "methods": ["GET"],
+        "description": "Retrieve the current voltage for a specified channel.",
+        "params": [
+            {
+                "name": "channel",
+                "in": "query",
+                "type": "integer",
+                "required": true,
+                "description": "Channel number (1 or 2). Example: /get_voltage?channel=1"
+            }
+        ]
+    },
+    {
+        "endpoint": "/set_voltage",
+        "methods": ["POST"],
+        "description": "Set the output voltage for a specified channel via JSON payload.",
+        "params": [
+            {
+                "name": "channel",
+                "in": "body (JSON)",
+                "type": "integer",
+                "required": true,
+                "description": "Channel number (1 or 2)."
+            },
+            {
+                "name": "voltage",
+                "in": "body (JSON)",
+                "type": "float",
+                "required": true,
+                "description": "Voltage value to set (range depends on channel)."
+            }
+        ],
+        "example_request": {
+            "channel": 1,
+            "voltage": 3.0
+        }
+    },
+    {
+        "endpoint": "/update_config",
+        "methods": ["POST"],
+        "description": "Update the Modbus configuration (host, port, unit_id).",
+        "params": [
+            {
+                "name": "host",
+                "in": "form",
+                "type": "string",
+                "required": true,
+                "description": "IP or hostname for the Modbus device."
+            },
+            {
+                "name": "port",
+                "in": "form",
+                "type": "integer",
+                "required": true,
+                "description": "Modbus TCP port (default 502)."
+            },
+            {
+                "name": "unit_id",
+                "in": "form",
+                "type": "integer",
+                "required": true,
+                "description": "Modbus Unit ID (device address on RS485 bus)."
+            }
+        ]
+    },
+    {
+        "endpoint": "/update_mqtt",
+        "methods": ["POST"],
+        "description": "Update the MQTT configuration (broker, port).",
+        "params": [
+            {
+                "name": "mqtt_broker",
+                "in": "form",
+                "type": "string",
+                "required": true,
+                "description": "IP or hostname of the MQTT broker."
+            },
+            {
+                "name": "mqtt_port",
+                "in": "form",
+                "type": "integer",
+                "required": true,
+                "description": "Port number for the MQTT broker (default 1883)."
+            }
+        ]
+    }
+]

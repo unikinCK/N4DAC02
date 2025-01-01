@@ -1,0 +1,64 @@
+<!-- api_doc_template.jinja -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .endpoint {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .endpoint h2 {
+            margin: 0 0 10px;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+        }
+        .param-list {
+            margin: 5px 0 15px;
+        }
+        .param-list li {
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>RESTful API Documentation</h1>
+    
+    {% for api in api_definition %}
+        <div class="endpoint">
+            <h2>{{ api.endpoint }}</h2>
+            <p><strong>Methods:</strong> {{ api.methods | join(', ') }}</p>
+            <p><strong>Description:</strong> {{ api.description }}</p>
+
+            {% if api.params %}
+                <p><strong>Parameters:</strong></p>
+                <ul class="param-list">
+                    {% for param in api.params %}
+                        <li>
+                            <strong>{{ param.name }}</strong> 
+                            (in: <em>{{ param.in }}</em>, 
+                            type: <em>{{ param.type }}</em>, 
+                            required: <em>{{ param.required }}</em>)
+                            <br>
+                            <em>{{ param.description }}</em>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if api.example_request %}
+                <p><strong>Example JSON Request:</strong></p>
+                <pre>{{ api.example_request | tojson(indent=4) }}</pre>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
+</html>
