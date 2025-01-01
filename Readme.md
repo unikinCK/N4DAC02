@@ -1,7 +1,7 @@
 
 # Modbus + MQTT Control App
 
-This application provides a Flask-based web interface for configuring and controlling a Modbus device, as well as publishing and subscribing to MQTT messages. Users can:
+This application provides a Flask-based web interface for configuring and controlling a N4DAC02 Modbus device, as well as publishing and subscribing to MQTT messages. Users can:
 
 - **Read and set voltages** on Modbus channels.
 - **Monitor connection statuses** for both Modbus and MQTT.
