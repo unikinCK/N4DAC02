@@ -4,11 +4,13 @@ from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import paho.mqtt.client as mqtt
 import json
+import os
+import signal
 
 app = Flask(__name__)
 
 # Configuration for Modbus device
-MODBUS_HOST = '192.168.0.101'  # Default Modbus device IP
+MODBUS_HOST = '192.168.0.184'  # Default Modbus device IP
 MODBUS_PORT = 502             # Default Modbus TCP port
 UNIT_ID = 1                   # Default RS485 address of your device
 MODBUS_CONNECTED = True       # Connection status for Modbus
@@ -139,7 +141,7 @@ def safe_publish_voltage():
 
 def modbus_set_voltage(channel, voltage):
     """Set the voltage for a specified channel."""
-    if not (0.05 <= voltage <= 5.0 if channel == 1 else 0.1 <= voltage <= 10.0):
+    if not (0.00 <= voltage <= 5.0 if channel == 1 else 0.0 <= voltage <= 10.0):
         print(f"Voltage {voltage} out of range for channel {channel}.")
         return False
     try:
@@ -203,27 +205,36 @@ def index():
 
 
 
-@app.route('/set_voltage', methods=['POST'])
-def set_voltage_json():
-    """Set the output voltage for a specified channel via JSON payload."""
-    data = request.json  # Parse JSON payload
-    if not data:
-        return jsonify({"error": "Invalid JSON payload."}), 400
+@app.route('/set_voltage', methods=['POST', 'GET'])
+def set_voltage():
+    """Set the output voltage for a specified channel via JSON payload or query parameters."""
+    if request.method == 'POST':
+        data = request.json  # Parse JSON payload
+        if not data:
+            return jsonify({"error": "Invalid JSON payload."}), 400
 
-    channel = data.get('channel')
-    voltage = data.get('voltage')
+        channel = data.get('channel')
+        voltage = data.get('voltage')
 
+    elif request.method == 'GET':
+        # Parse query parameters
+        channel = request.args.get('channel', type=int)
+        voltage = request.args.get('voltage', type=float)
+
+    # Validate inputs
     if not isinstance(channel, int) or not isinstance(voltage, (int, float)):
         return jsonify({"error": "Invalid channel or voltage format."}), 400
 
     if channel not in [1, 2]:
         return jsonify({"error": "Invalid channel. Use 1 or 2."}), 400
 
+    # Attempt to set the voltage
     success = modbus_set_voltage(channel, voltage)
     if success:
         return jsonify({"message": "Voltage set successfully.", "channel": channel, "voltage": voltage})
     else:
         return jsonify({"error": "Failed to set voltage."}), 500
+
 
 
 @app.route('/set_voltage_form', methods=['POST'])
@@ -336,6 +347,15 @@ def update_mqtt_topic():
         "state_topic": MQTT_STATE_TOPIC
     })
 
+@app.route('/restart_server', methods=['POST'])
+def restart_server():
+    """Restart the Flask server."""
+    try:
+        # Send the signal to the current process to terminate it gracefully
+        os.kill(os.getpid(), signal.SIGINT)
+        return jsonify({"message": "Server is restarting..."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to restart server: {e}"}), 500
 
 if __name__ == '__main__':
     # Check connections

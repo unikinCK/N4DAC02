@@ -1,0 +1,47 @@
+#change 3019183667 for your serial number
+
+meters:
+  - name: my_grid
+    type: custom
+    power:
+      source: calc
+      add:
+        - source: mqtt
+          topic: sma/data/3019183667/psupply # MQTT topic for grid power supply
+          timeout: 30s               # Don't accept values older than this timeout
+          scale: -1                  # Scale factor for supply power (inverted for addition)
+        - source: mqtt
+          topic: sma/data/3019183667/pconsume # MQTT topic for grid power consumption
+          timeout: 30s               # Don't accept values older than this timeout
+          scale: 1                   # Scale factor for consumption power
+    energy:
+      source: mqtt
+      topic: sma/data/3019183667/pconsumecounter # MQTT topic for energy consumption counter
+      timeout: 30s               # Don't accept values older than this timeout
+      scale: 1                   # Scale factor for energy values
+    voltages:
+      - source: mqtt
+        topic: sma/data/3019183667/u1 # MQTT topic for voltage phase 1
+        timeout: 30s
+        scale: 1
+      - source: mqtt
+        topic: sma/data/3019183667/u2 # MQTT topic for voltage phase 2
+        timeout: 30s
+        scale: 1
+      - source: mqtt
+        topic: sma/data/3019183667/u3 # MQTT topic for voltage phase 3
+        timeout: 30s
+        scale: 1
+    currents:
+      - source: mqtt
+        topic: sma/data/3019183667/i1 # MQTT topic for current phase 1 (Amps)
+        timeout: 30s
+        scale: 1
+      - source: mqtt
+        topic: sma/data/3019183667/i2 # MQTT topic for current phase 2 (Amps)
+        timeout: 30s
+        scale: 1
+      - source: mqtt
+        topic: sma/data/3019183667/i3 # MQTT topic for current phase 3 (Amps)
+        timeout: 30s
+        scale: 1
